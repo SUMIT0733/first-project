@@ -4,12 +4,14 @@ public class Course {
 	private long id;
 	private String name;
 	private String author;
+	private static int counter=0;
 	
 	public Course(long id, String name, String author) {
 		super();
 		this.id = id;
 		this.name = name;
 		this.author = author;
+		counter++;
 	}
 
 	public Course() {
