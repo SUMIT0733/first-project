@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class CourseController {
 	
-
 	@GetMapping("/courses")
 	public List<Course> getCourses(){
 		 return Arrays.asList(
