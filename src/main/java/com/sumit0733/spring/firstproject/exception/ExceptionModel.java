@@ -1,4 +1,4 @@
-package exception;
+package com.sumit0733.spring.firstproject.exception;
 
 import java.time.LocalDateTime;
 

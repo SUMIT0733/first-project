@@ -2,9 +2,16 @@ package com.sumit0733.spring.firstproject.users;
 
 import java.time.LocalDate;
 
+import jakarta.validation.constraints.Past;
+import jakarta.validation.constraints.Size;
+
 public class User {
 	private int ID;
+	
+	@Size(min = 2, message = "Name size must be greater than 2 characters.")
 	private String name;
+	
+	@Past(message = "Birthdate must be in past")
 	private LocalDate birthDate;
 	
 	
