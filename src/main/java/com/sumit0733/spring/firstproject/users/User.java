@@ -2,16 +2,25 @@ package com.sumit0733.spring.firstproject.users;
 
 import java.time.LocalDate;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import jakarta.validation.constraints.Past;
 import jakarta.validation.constraints.Size;
 
+@JsonFilter("User_Filter")
 public class User {
+	
+	@JsonIgnore
 	private int ID;
 	
 	@Size(min = 2, message = "Name size must be greater than 2 characters.")
+	@JsonProperty("user_name")
 	private String name;
 	
 	@Past(message = "Birthdate must be in past")
+	@JsonProperty("Birth_date")
 	private LocalDate birthDate;
 	
 	
