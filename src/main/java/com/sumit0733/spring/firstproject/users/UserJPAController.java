@@ -2,7 +2,9 @@ package com.sumit0733.spring.firstproject.users;
 
 import java.net.URI;
 import java.util.List;
+import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.json.MappingJacksonValue;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -20,45 +22,47 @@ import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import jakarta.validation.Valid;
 
 @RestController
-public class UserController {
+public class UserJPAController {
 
-//	@Autowired
-	public UserDAO userDAO;
+	private UserJPARepository repository;
+	private UserDAO userDAO;
 	
-	public UserController(UserDAO userDAO) {
+	public UserJPAController(UserDAO userDAO, UserJPARepository repository) {
 		this.userDAO = userDAO;
-	} 
-	
-	@GetMapping("/users")
-	public MappingJacksonValue findall(){
-		List<User> list = userDAO.findall();
-		
-		MappingJacksonValue mappingJacksonValue = new MappingJacksonValue(list);
-		
-		SimpleBeanPropertyFilter filter = SimpleBeanPropertyFilter.filterOutAllExcept("user_name","Birth_date");
-		FilterProvider FilterProvider = new SimpleFilterProvider().addFilter("User_Filter", filter );
-		mappingJacksonValue.setFilters(FilterProvider );
-		
-		return mappingJacksonValue;
+		this.repository = repository;
 	}
 	
-	@GetMapping("/users/{id}")
-	public User findOne(@PathVariable int id) {
-		User user = userDAO.findByID(id);
-		
-		if(user==null)
-			throw new UserNotFoundException("Id Not Found:"+id);
-		return user;
+	@GetMapping("/jpa/users")
+	public List<User> findall(){
+		List<User> list = repository.findAll();
+//		MappingJacksonValue mappingJacksonValue = new MappingJacksonValue(list);
+//		SimpleBeanPropertyFilter filter = SimpleBeanPropertyFilter.filterOutAllExcept("user_name","Birth_date","id");
+//		FilterProvider FilterProvider = new SimpleFilterProvider().addFilter("User_Filter", filter );
+//		mappingJacksonValue.setFilters(FilterProvider );
+		return list;
 	}
 	
-	@DeleteMapping("/users/{id}")
+	@GetMapping("/jpa/users/{user_id}")
+	public User findOne(@PathVariable int user_id) {
+		Optional<User> user = repository.findById(user_id);
+		
+		if(user.isEmpty()) {
+			System.out.println("USER NOT FOUND!!!");
+			throw new UserNotFoundException("Id Not Found:"+user_id);
+		}else {
+			System.out.println(user.get());
+			return user.get();
+		}	
+	}
+	
+	@DeleteMapping("/jpa/users/{id}")
 	public void deleteOne(@PathVariable int id) {
-		userDAO.deleteByID(id);
+		repository.deleteById(id);
 	}
 	
-	@PostMapping("/users")
+	@PostMapping("/jpa/users")
 	public ResponseEntity<User> createUser(@Valid @RequestBody User user) {
-		User saved_user = userDAO.addUser(user);
+		User saved_user = repository.save(user);
 		URI location = ServletUriComponentsBuilder.fromCurrentRequest()
 				.path("/{id}")
 				.buildAndExpand(saved_user.getID())
